@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Art;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ArtController extends Controller
 {
@@ -20,25 +22,31 @@ class ArtController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Display a listing of newest art.
      *
      * @return \Illuminate\Http\Response
      */
     public function recentArt() 
     {
-        $recentArt = Art::latest()->get();
-
+        $recentArt = Art::latest()->take(9)->get();
+        // dd($recentArt);
         return response()->json($recentArt);
+    }
+  
+    /**
+     * Like a piece of art.
+     *
+     * @param \Illuminate\Http\Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function like(Request $request) 
+    {
+        $artworkToLike = Art::find($request->artId);
+        $artworkToLike->likes->increment(1);
+        $artworkToLike->save();
+
+        return response()->json('204');
     }
 
     /**
@@ -49,13 +57,27 @@ class ArtController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = User::find($request->userId);
+
+        $file = $request->file('file');
+        $path = $user->name . '/art/' . $request->title;
+        Storage::put($path, $file);
+
+        $art = new Art;
+        $art->title = $request->title;
+        $art->description = $request->description;
+        $art->src = $path;
+        $art->owner_id = $user->id;
+        $art->save();
+
+        return response()->json('200');
     }
 
     /**
      * Display the specified piece of art.
      *
      * @param  int  $id
+     * 
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -67,6 +89,7 @@ class ArtController extends Controller
      * Show the form for editing the specified piece of art.
      *
      * @param  int  $id
+     * 
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -78,12 +101,26 @@ class ArtController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int                       $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($request->userId);
+        $art = Art::find($id);
+
+        $oldPath = $user->name . '/art/' . $art->title;
+        $newPath = $user->name . '/art/' . $request->title;
+        Storage::delete($oldPath);
+        Storage::put($newPath);
+
+        $art->title = $request->title;
+        $art->description = $request->description;
+        $art->src = $newPath;
+        $art->save();
+
+        return response()->json('204');
     }
 
     /**
@@ -94,6 +131,9 @@ class ArtController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $art = Art::find($id);
+        $art->delete();
+
+        return response()->json('204');
     }
 }

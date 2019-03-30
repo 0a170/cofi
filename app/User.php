@@ -5,11 +5,21 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\BinaryUuid\HasBinaryUuid;
+use Laravel\Passport\HasApiTokens;
+use App\Models\Traits\Uuids;
+
 
 class User extends Authenticatable
 {
-    use Notifiable, HasBinaryUuid;
+    use Uuids, HasApiTokens, Notifiable;
+
+    protected $primaryKey = 'id'; // or null
+
+    public $incrementing = false;
+
+    protected $casts = [
+        'id' => 'string'
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -36,6 +46,6 @@ class User extends Authenticatable
      */
     public function artwork() 
     {
-        return $this->hasMany(Art::class);
+        return $this->hasMany(\App\Models\Art::class);
     }
 }

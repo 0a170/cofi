@@ -11,6 +11,11 @@
     <div id="app">
         <app></app>
     </div>
+    @section('content')
+    <div class="container">
+        <passport-clients></passport-clients>
+    </div>
+    @endsection
 
     <script src="{{ mix('js/app.js') }}"></script>
 </body>
