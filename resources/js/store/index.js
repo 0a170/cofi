@@ -23,14 +23,12 @@ export const store = new Vuex.Store({
       localStorage.setItem('accessToken', accessToken)
     },
     deleteToken (state) {
-      console.log(state)
       state.accessToken = null
       localStorage.removeItem('accessToken')
     }
   },
   actions: {
     login (store, payload) {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + store.state.accessToken
       return new Promise((resolve, reject) => {
         axios.post('/api/login', { username: payload.username, password: payload.password })
         .then(response => {
@@ -43,6 +41,7 @@ export const store = new Vuex.Store({
       })
     },
     logout (store) {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + store.state.accessToken
       return new Promise((resolve, reject) => {
         if (store.state.accessToken) {
           axios.post('/api/logout')

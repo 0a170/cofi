@@ -5,7 +5,7 @@
         <v-card-title>
             Login
         </v-card-title>
-        <v-spacer></v-spacer>
+        <divider></divider>
         <v-card-actions>
           <v-text-field
            v-model="username"
@@ -13,6 +13,8 @@
            :rules="usernameRules"
            required
           ></v-text-field>
+        </v-card-actions>
+        <v-card-actions>
           <v-text-field
            v-model="password"
            label="Password"
@@ -21,7 +23,9 @@
            required
           ></v-text-field>
         </v-card-actions>
-        <v-btn @click="login" class="primary">Login</v-btn>
+        <v-card-actions>
+          <v-btn @click="login" class="primary">Login</v-btn>
+        </v-card-actions>
       </v-card>
     </v-form>
   </v-container>

@@ -25,12 +25,24 @@
       <v-toolbar flat>
         <v-list>
           <v-list-tile>
-            <v-list-tile-title class="title">
+            <v-list-tile-content>
               Application
-            </v-list-tile-title>
+            </v-list-tile-content>
           </v-list-tile>
         </v-list>
       </v-toolbar>
+      <v-list>
+        <v-list-tile>
+          <v-list-tile-content>
+            <v-btn flat>Link One</v-btn>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile>
+          <v-list-tile-content>
+            <v-btn flat>Link Two</v-btn>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
     </v-navigation-drawer>
     <v-snackbar
      v-model="userLoggedSnackbar"
@@ -71,7 +83,9 @@ export default {
   }),
   computed: {
     userAccessToken () {
-      return this.$store.state.accessToken
+      // return this.$store.state.accessToken
+      return this.$store.getters.getAccessToken
+
     }
   },
   methods: {

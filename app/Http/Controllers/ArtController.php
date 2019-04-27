@@ -76,17 +76,18 @@ class ArtController extends Controller
     /**
      * Display the specified piece of art.
      *
-     * @param  int  $id
+     * @param Art $id //id of art piece
      * 
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
+        $art = Art::find($id);
+        return response()->json($art);
     }
 
     /**
-     * Show the form for editing the specified piece of art.
+     * editing the specified piece of art.
      *
      * @param  int  $id
      * 

@@ -40,7 +40,7 @@ $factory->define(\App\Models\Art::class, function (Faker $faker) {
         'title' => $title,
         'description' => $faker->sentence,
         'src' => 'http://cofi.test/storage' . substr($image, 32),
-        // 'src' => 'art/' . $user->name . '/' . $title,
+        'summary' => $faker->text,
         'likes' => 0,
         'owner_id' => $user->id
     ];

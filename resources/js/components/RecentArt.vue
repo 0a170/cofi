@@ -11,23 +11,26 @@
           <v-card
           slot-scope="{ hover }"
           class="mx-auto"
+          color="grey lighten-4"
           >
             <v-card-title>
               {{ art.title }}
             </v-card-title>
                 <v-img
                  :src="art.src"
-                 aspect-ratio="1"
+                 :aspect-ratio="1"
                 >
                   <v-expand-transition>
                     <div
                       v-if="hover"
-                      class="d-flex transition-fast-in-fast-out orange darken-2 v-card--reveal display-3 white--text"
+                      class="d-flex transition-fast-in-fast-out red darken-2 v-card--reveal display-3 white--text"
                       style="height: 100%;"
                     >
-                      {{ index }}
-                      <v-btn flat icon color="blue darken-2" @click="like(art)">
-                        <v-icon>thumb_up</v-icon>
+                      <v-btn flat color="blue darken-2" @click="openDialog(art)">
+                        <v-icon>center_focus_strong</v-icon>
+                      </v-btn> 
+                      <v-btn flat color="blue darken-2" :to="{ name: 'ArtPage', params: { id: art.id }}">
+                        <v-icon large>arrow_forward</v-icon>
                       </v-btn> 
                     </div>
                   </v-expand-transition>
@@ -36,6 +39,27 @@
         </v-hover>
       </v-flex>
     </v-layout>
+    <v-dialog
+     v-model="artDialog"
+     fullscreen
+     full-width
+    >
+        <v-btn
+          color="red lighten-2"
+          dark
+          @click="artDialog = false"
+        >
+          <v-icon>close</v-icon>
+        </v-btn>
+
+      <v-card>
+        <v-img
+         :src=selectedArt.src
+         aspect-ratio="1"
+        >
+        </v-img>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -44,7 +68,9 @@ import axios from 'axios'
 
 export default {
   data: () => ({
-    recentArt: []
+    recentArt: [],
+    artDialog: false,
+    selectedArt: ''
   }),
   mounted () {
     this.getRecentArt()
@@ -56,6 +82,7 @@ export default {
         this.recentArt = response.data
       })
       .catch(e => {
+        console.log('blah')
         this.errors.push(e)
       })
     },
@@ -64,6 +91,10 @@ export default {
       .then(response => {
         
       })
+    },
+    openDialog(art) {
+      this.selectedArt = art
+      this.artDialog = true
     }
   }
 }

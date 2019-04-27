@@ -13,8 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->group( 
-    function () {
+// Route::middleware('auth:api')->group( 
+Route::group(['middleware' => ['auth:api']], 
+    function () { 
         Route::post('/logout', 'AuthController@logout');
         Route::post('/submitArt', 'ArtController@store');
         Route::put('/updateArt', 'ArtController@update');
@@ -27,4 +28,5 @@ Route::post('/login', 'AuthController@login');
 Route::post('/register', 'AuthController@register');
 Route::get('/users', 'UserController@index');
 Route::get('/Art', 'ArtController@index');
+Route::get('/show/{id}', 'ArtController@show');
 Route::get('/recentArt', 'ArtController@recentArt');

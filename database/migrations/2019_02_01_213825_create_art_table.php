@@ -18,6 +18,7 @@ class CreateArtTable extends Migration
             $table->primary('id');
             $table->string('title');
             $table->string('description');
+            $table->text('summary');
             $table->string('src');
             $table->integer('likes')->default(0);
             $table->uuid('owner_id');

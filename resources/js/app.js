@@ -27,6 +27,7 @@ Vue.component(
 import App from '../views/App'
 import Home from '../views/Home'
 import Welcome from '../views/Welcome'
+import ArtPage from '../views/ArtPage'
 import Users from '../views/Users'
 import Login from '../views/auth/Login'
 import Register from '../views/auth/Register'
@@ -44,6 +45,11 @@ const router = new VueRouter({
             path: '/welcome',
             name: 'welcome',
             component: Welcome,
+        },
+        {
+            path: '/art/:id',
+            name: 'ArtPage',
+            component: ArtPage,
         },
         {
             path: '/users',
