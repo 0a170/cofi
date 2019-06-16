@@ -48,4 +48,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Art::class);
     }
+
+    /**
+     * Number of likes
+     * 
+     * @return int $likes
+     */
+    public function likes()
+    {
+        // return $this->belongsToMany(User::class, 'likes', 'art_id', 'user_id');
+        return $this->belongsToMany(User::class, 'likes');
+    }
 }

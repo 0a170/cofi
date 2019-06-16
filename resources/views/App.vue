@@ -19,6 +19,7 @@
           </v-avatar>
         </v-btn>
         <v-btn v-else flat :to="{ name: 'login' }">Log in</v-btn>
+        <v-btn v-if="!userAccessToken" flat :to="{ name: 'register' }">Register</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-navigation-drawer v-model="drawer" class="hidden-md-and-up">

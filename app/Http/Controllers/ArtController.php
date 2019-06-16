@@ -6,6 +6,8 @@ use App\Models\Art;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ArtController extends Controller
 {
@@ -29,24 +31,55 @@ class ArtController extends Controller
     public function recentArt() 
     {
         $recentArt = Art::latest()->take(9)->get();
-        // dd($recentArt);
         return response()->json($recentArt);
+    }
+
+
+    /**
+     * Return filtered art by filter type
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function filterArt(Request $request) 
+    {
+        if ($request->get('filterType') == 'Recent') {
+            $artList = Art::latest()->get();
+        } else if ($request->get('filterType') == 'Highest Rated') {
+            $artList = Art::orderBy('likes', 'desc')->get();
+        } else if ($request->get('filterType') == 'Lowest Rated') {
+            $artList = Art::orderBy('likes', 'asc')->get();
+        }
+
+        return response()->json($artList);
     }
   
     /**
      * Like a piece of art.
      *
+     * @param UUID $id
      * @param \Illuminate\Http\Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function like(Request $request) 
-    {
-        $artworkToLike = Art::find($request->artId);
-        $artworkToLike->likes->increment(1);
-        $artworkToLike->save();
+    public function like($id, Request $request) 
+    {   
+        $artworkToLike = Art::find($id);
 
-        return response()->json('204');
+        if ($request->params['vote'] == true) {
+            $artworkToLike->increment('likes');
+            $artworkToLike->save();
+            DB::table('likes')->insert([
+                'art_id' => $id,
+                'user_id' => Auth::user()->id,
+                'liked' => true
+            ]);
+        } else {
+            $artworkToLike->decrement('likes');
+            DB::table('likes')->where('art_id', $artworkToLike->id)
+                ->where('user_id', Auth::user()->id)
+                ->delete();
+        }
+        return response()->json($artworkToLike->likes);
     }
 
     /**
@@ -87,9 +120,9 @@ class ArtController extends Controller
     }
 
     /**
-     * editing the specified piece of art.
+     * Editing the specified piece of art.
      *
-     * @param  int  $id
+     * @param int $id //art id
      * 
      * @return \Illuminate\Http\Response
      */

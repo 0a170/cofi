@@ -9,9 +9,15 @@
           <v-card-title primary-title>
             {{ art.title }}
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="overflow: scroll-y; max-height: 400px">
             {{ art.summary }}
           </v-card-text>
+          <v-card-actions>
+            <v-btn flat icon @click="like(art.id)">
+              <v-icon v-if="art.isLiked" color="green">thumb_up</v-icon>
+              <v-icon v-else>thumb_up</v-icon> {{ art.likes }}
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-flex>
     </v-layout>
@@ -20,8 +26,14 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
+  computed: {
+    ...mapGetters([
+      'getAccessToken'
+    ])
+  },
   data: () => ({
     art: '',
     artDialog: false
@@ -31,19 +43,28 @@ export default {
   },
   methods: {
     getArt() {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.getAccessToken
       axios.get('/api/show/' + this.$route.params.id)
       .then(response => {
-        console.log('yeah')
         this.art = response.data
       })
       .catch(e => {
         this.errors.push(e)
       })
     },
-    like(art) {
-      axios.post('/api/like', { artId: artId })
+    like(artId) {
+      if (!this.getAccessToken) {
+        this.$router.push({name: 'login'})
+        return
+      }
+      var vote = ''; 
+      vote = (this.art.isLiked) ? false : true
+      // console.log(this.getAccessToken)
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.getAccessToken
+      axios.post('/api/like/' + artId, {params: {vote: vote}})
       .then(response => {
-        
+        this.art.isLiked = vote
+        this.art.likes = response.data
       })
     }
   }

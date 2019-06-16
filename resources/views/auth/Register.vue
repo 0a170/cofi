@@ -40,6 +40,14 @@
 import axios from 'axios'
 
 export default {
+  computed: {
+    confPassRules () {
+      return [
+        v => !!v || "Password confirmation is required",
+        v => this.password === this.passwordConfirm ? true : false || "Must match password"
+      ]
+    }
+  },
   data: () => ({
     username: '',
     email: '',
@@ -53,10 +61,6 @@ export default {
     ],
     passwordRules: [
         v => !!v || "Password is required"
-    ],
-    confPassRules: [
-        v => !!v || "Password confirmation is required",
-        v => this.passwordMatches() || "Must match password"
     ]
   }),
   methods: {

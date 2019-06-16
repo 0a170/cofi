@@ -1,6 +1,15 @@
 <template>
   <v-container>
     <v-layout row wrap>
+      <v-flex xs12 sm12>
+        <v-select
+          v-model="type"
+          :items="filterOptions"
+          label="Filter By"
+          prepend-icon="filter_list"
+          @input="filter(type)"
+        ></v-select>
+      </v-flex>
       <v-flex
        v-for="(art, index) in recentArt"
        :key="index"
@@ -70,7 +79,13 @@ export default {
   data: () => ({
     recentArt: [],
     artDialog: false,
-    selectedArt: ''
+    selectedArt: '',
+    filterOptions: [
+      'Recent',
+      'Highest Rated',
+      'Lowest Rated'
+    ],
+    type: ''
   }),
   mounted () {
     this.getRecentArt()
@@ -82,16 +97,27 @@ export default {
         this.recentArt = response.data
       })
       .catch(e => {
-        console.log('blah')
+        console.log(JSON.stringify(e))
         this.errors.push(e)
       })
     },
-    like(art) {
-      axios.post('/api/like', { artId: artId })
+    filter(type) {
+      console.log(type)
+      axios.get('/api/filterArt', { params: { filterType: type }})
       .then(response => {
-        
+        this.recentArt = response.data
+      })
+      .catch(e => {
+        // console.log(JSON.stringify(e))
+        // this.errors.push(e)
       })
     },
+    // like(art) {
+    //   axios.post('/api/like', { artId: artId })
+    //   .then(response => {
+        
+    //   })
+    // },
     openDialog(art) {
       this.selectedArt = art
       this.artDialog = true
