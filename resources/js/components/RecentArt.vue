@@ -79,7 +79,10 @@ export default {
   data: () => ({
     recentArt: [],
     artDialog: false,
+    currentPage: null,
+    lastPage: null,
     selectedArt: '',
+    atBottomOfPage: false,
     filterOptions: [
       'Recent',
       'Highest Rated',
@@ -89,12 +92,15 @@ export default {
   }),
   mounted () {
     this.getRecentArt()
+    this.scroll()
   },
   methods: {
     getRecentArt() {
       axios.get('/api/recentArt')
       .then(response => {
-        this.recentArt = response.data
+        this.recentArt = response.data.data
+        this.currentPage = response.data.current_page
+        this.lastPage = response.data.last_page
       })
       .catch(e => {
         console.log(JSON.stringify(e))
@@ -112,6 +118,17 @@ export default {
         // this.errors.push(e)
       })
     },
+    loadNextPage() {
+      let nextPage = this.currentPage + 1
+      if (nextPage <= this.lastPage) {
+        axios.get(`http://cofi.test/api/recentArt?page=${nextPage}`)
+        .then(response => {
+          this.recentArt.push(...response.data.data)
+          this.currentPage = response.data.current_page
+          this.lastPage = response.data.last_page
+        });
+      }
+    },
     // like(art) {
     //   axios.post('/api/like', { artId: artId })
     //   .then(response => {
@@ -121,6 +138,16 @@ export default {
     openDialog(art) {
       this.selectedArt = art
       this.artDialog = true
+    },
+    scroll () {
+      window.onscroll = () => {
+        let bottomOfWindow = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop) + window.innerHeight === document.documentElement.offsetHeight
+
+        if (bottomOfWindow) {
+         this.atBottomOfPage = true // replace it with your code
+         this.loadNextPage()
+        }
+      }
     }
   }
 }

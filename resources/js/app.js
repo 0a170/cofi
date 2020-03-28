@@ -31,6 +31,7 @@ import ArtPage from '../views/ArtPage'
 import Users from '../views/Users'
 import Login from '../views/auth/Login'
 import Register from '../views/auth/Register'
+import Profile from '../views/Profile'
 import { store } from './store'
 
 const router = new VueRouter({
@@ -65,6 +66,11 @@ const router = new VueRouter({
             path: '/register',
             name: 'register',
             component: Register
+        },
+        {
+            path: '/profile/:userId',
+            name: 'profile',
+            component: Profile
         }
     ],
 });

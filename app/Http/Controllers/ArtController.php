@@ -30,7 +30,8 @@ class ArtController extends Controller
      */
     public function recentArt() 
     {
-        $recentArt = Art::latest()->take(9)->get();
+        //$recentArt = Art::latest()->take(9)->get();
+        $recentArt = Art::latest()->paginate(9);
         return response()->json($recentArt);
     }
 
